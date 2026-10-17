@@ -480,8 +480,8 @@
             clearInterval(mantenerArriba)
             document.body.style.overflowY = "auto"
             document.body.style.overflowX = "hidden"
-        },1200)
-    },400)
+        },600)
+    },100)
 
     fetch("/obtenercategorias",{method:"POST"})
     .then(res=>res.json())
