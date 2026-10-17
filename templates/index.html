@@ -422,7 +422,7 @@
     </div>
     <div id="principal">
         <header>
-            <button class="cart-btn">
+            <button class="cart-btn" id="carritobtn">
                 🛒 Carrito <span class="cart-badge" id="numero-carrito">0</span>
             </button>
             <div class="logo">VORTEX-COMMERCE</div>
@@ -485,15 +485,22 @@
     fetch("/obtenercategorias",{method:"POST"})
     .then(res=>res.json())
     .then(rptacategorias=>{
-        for (elemento of rptacategorias){
+        if (rptacategorias.exito === false){
+            return
+        } else{
+            for (elemento of rptacategorias){
             document.getElementById("selectctg").innerHTML += `<option value="${elemento[0]}">${elemento[0]}</option> `
+        }
         }
     })
 
     fetch("/catalogoproductos",{method:"POST"})
     .then(res=>res.json())
     .then(rptacatalogo=>{
-        let html = ""
+        if (rptacatalogo.exito === false){
+            return
+        } else{
+                    let html = ""
         for (let elemento of rptacatalogo){
             if (Number(elemento[4]) > 0){
                 html += `<div class="product-card">
@@ -556,6 +563,8 @@
 
                 })
         }
+        }
+
 
     })
 
@@ -578,6 +587,8 @@
             })
         }
     })
-
+    document.getElementById("carritobtn").addEventListener("click",()=>{
+        window.location.href = "/carrito"
+    })
 </script>
 </html>

@@ -40,7 +40,10 @@ def entregarcategorias():
     try:
         ejecutador.execute("SELECT * FROM lista_categorias")
         rptacategorias = ejecutador.fetchall()
-        return jsonify(rptacategorias)
+        if len(rptacategorias) > 0:
+            return jsonify(rptacategorias)
+        else:
+            return jsonify({"exito":False})
     finally:
         ejecutador.close()
         conexion.close()
@@ -52,7 +55,10 @@ def entregarcatalogo():
     try:
        ejecutador.execute("SELECT * FROM productos_vortex ORDER BY RAND() LIMIT 12")
        rpta = ejecutador.fetchall()
-       return jsonify(rpta)
+       if len(rpta) > 0:
+            return jsonify(rpta)
+       else:
+            return jsonify({"exito":False})
     finally:
         ejecutador.close()
         conexion.close()
