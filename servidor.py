@@ -16,7 +16,8 @@ def obtener_conexion():
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database="vortex",
-        use_pure=True
+        use_pure=True,
+        connection_timeout=10
     )
 
 app = Flask(__name__)
