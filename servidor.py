@@ -13,11 +13,13 @@ cloudinary.config(
 def obtener_conexion():
     return conector.connect(
         host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT")),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database="vortex",
         use_pure=True,
-        connection_timeout=10
+        connection_timeout=10,
+        ssl_disabled=False
     )
 
 app = Flask(__name__)
