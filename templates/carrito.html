@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex-Commerce - Carrito</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        /* Scrollbar personalizado global (para todo el HTML) */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0b0b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff6600;
+        }
+        /* Scrollbars personalizados para las secciones de productos */
+        .products-scroll-container::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .products-scroll-container::-webkit-scrollbar-track {
+            background: #121212;
+            border-radius: 10px;
+        }
+        .products-scroll-container::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 10px;
+        }
+        .products-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #ff6600;
+        }
+        body {
+            background-color: #0b0b0b;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            scrollbar-color: #2a2a2a #0b0b0b;
+            scrollbar-width: thin;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #0b0b0b;
+            border-bottom: 1px solid #1a1a1a;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .cart-btn {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #333333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        .cart-btn:hover {
+            background-color: #252525;
+            border-color: #555;
+        }
+        .cart-badge {
+            background-color: #ff6600;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .logo {
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+        .main-content {
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 22px;
+            background-color: #ff6600;
+            border-radius: 2px;
+        }
+        /* Contenedor con scroll vertical para el carrito */
+        .products-scroll-container {
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 10px;
+            background-color: #121212;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        /* Tarjeta de ítem en el carrito según la estructura solicitada */
+        .cart-item-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color 0.2s;
+        }
+        .cart-item-card:hover {
+            border-color: #ff6600;
+        }
+        .cart-item-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex: 1;
+            margin-right: 20px;
+        }
+        .product-name-txt {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .product-price-txt {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffb74d;
+        }
+        .delete-btn {
+            background-color: #1a1a1a;
+            color: #ff4d4d;
+            border: 1px solid #ff4d4d;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .delete-btn:hover {
+            background-color: #ff4d4d;
+            color: #ffffff;
+        }
+        /* Totalizador */
+        .total-container {
+            background-color: #141414;
+            border: 1px solid #333333;
+            padding: 18px 24px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .total-container span {
+            color: #ff6600;
+        }
+        /* Sección de Mensaje */
+        .message-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .message-label {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #b0b0b0;
+        }
+        .message-textarea {
+            width: 100%;
+            background-color: #121212;
+            border: 1px solid #333333;
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: #ffffff;
+            font-size: 14px;
+            resize: none;
+            height: 90px;
+            outline: none;
+        }
+        .message-textarea:focus {
+            border-color: #ff6600;
+        }
+        /* Botón de Confirmar Pedido */
+        .confirm-btn {
+            background-color: #ff6600;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+            width: 100%;
+        }
+        .confirm-btn:hover {
+            background-color: #e05b00;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="cart-btn" id="carrito">
+        </button>
+        <div class="logo">VORTEX-COMMERCE</div>
+    </header>
+
+    <main class="main-content">
+        <h1 class="section-title">CARRITO</h1>
+
+        <div class="products-scroll-container" id="scroll-contenedor">
+        </div>
+
+        <div class="total-container" id="total">
+        </div>
+
+
+        <div class="message-section" id="mensaje">
+        </div>
+
+
+        <button type="button" class="confirm-btn" id="btn-confirmar">CONFIRMAR PEDIDO POR WHATSAPP</button>
+    </main>
+</body>
+<script>
+    const scrolling = document.getElementById("scroll-contenedor")
+    const total = document.getElementById("total")
+    const mensaje = document.getElementById("mensaje")
+    const bton_confirmar = document.getElementById("btn-confirmar")
+    const valores = localStorage.getItem("ProductosAñadidos")
+    const carrito = document.getElementById("carrito")
+    if (valores){
+        const lista = JSON.parse(valores)
+        carrito.innerHTML = `🛒 Carrito <span class="cart-badge">${lista.length}</span>`
+        fetch("/productos-pedidos",{method:"POST",headers:{"Content-Type": "application/json"},body:JSON.stringify({lista_productos:lista})})
+        .then(res=>res.json())
+        .then(rpta=>{
+            if (rpta.exito === true){
+            let html=""
+            let total_precio = 0
+            let lista_productos = []
+            let lista_db = rpta.Lista
+            for (let elemento of lista_db){
+                total_precio += Number(elemento[6])
+                lista_productos.push(`(${elemento[1]} de precio de S/${elemento[6]})`)
+                html += `<div class="cart-item-card" id="tarjeta-producto-${elemento[0]}">
+                <div class="cart-item-info">
+                    <span class="product-name-txt">${elemento[1]}</span>
+                    <span class="product-price-txt">S/${elemento[6]}</span>
+                </div>
+                <button type="button" class="delete-btn" id="producto-${elemento[0]}">ELIMINAR</button>
+            </div>`
+            }
+            scrolling.innerHTML = html
+            total.innerHTML =`TOTAL: <span>S/${total_precio}</span>`
+            mensaje.innerHTML = `<label class="message-label" for="mensaje-pedido">MENSAJE:</label>
+            <textarea class="message-textarea" id="mensaje-pedido" readonly>Hola, Quiero pedir ${lista_productos}</textarea>`
+            for (let producto of lista_db){
+                document.getElementById(`producto-${producto[0]}`).addEventListener("click",()=>{
+                    let encontrado = false
+                    for (let nuevo of lista){
+                        if (Number(nuevo.id) === Number(producto[0])){
+                            encontrado = true
+                        }
+                    }
+                    if (encontrado === true){
+                        document.getElementById(`tarjeta-producto-${producto[0]}`).remove()
+                        lista_db = lista_db.filter(i=>Number(i[0])!==Number(producto[0]))
+                        lista_productos = []
+                        total_precio = 0
+                        let para_localstorage = []
+                        for (let j of lista_db){
+                            para_localstorage.push({id:j[0]})
+                            lista_productos.push(`(${j[1]} de precio S/${j[6]})`)
+                            total_precio += Number(j[6])
+                        }
+                        localStorage.setItem("ProductosAñadidos",JSON.stringify(para_localstorage))
+                        total.innerHTML =`TOTAL: <span>S/${total_precio}</span>`
+                        mensaje.innerHTML = ""
+                        mensaje.innerHTML = `<label class="message-label" for="mensaje-pedido">MENSAJE:</label>
+                        <textarea class="message-textarea" id="mensaje-pedido" readonly>Hola, Quiero pedir ${lista_productos}</textarea>`
+                        carrito.innerHTML = `🛒 Carrito <span class="cart-badge">${para_localstorage.length}</span>`
+
+                    }
+                })
+            }
+            bton_confirmar.addEventListener("click",()=>{
+                window.open(`https://wa.me/${rpta.numero}?text=${document.getElementById("mensaje-pedido").value}`,"_blank")
+                localStorage.removeItem("ProductosAñadidos")
+                window.location.replace("/")
+            })
+
+            }
+
+        })
+    }
+
+</script>
+</html>

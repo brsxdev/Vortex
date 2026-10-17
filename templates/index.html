@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex-Commerce</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        /* Scrollbar personalizado global (para todo el HTML) */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0b0b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff6600;
+        }
+        /* Scrollbars personalizados para las secciones de productos */
+        .products-scroll-container::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .products-scroll-container::-webkit-scrollbar-track {
+            background: #121212;
+            border-radius: 10px;
+        }
+        .products-scroll-container::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 10px;
+        }
+        .products-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #ff6600;
+        }
+        body {
+            background-color: #0b0b0b;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            scrollbar-color: #2a2a2a #0b0b0b;
+            scrollbar-width: thin;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .central-image-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(150%);
+            z-index: 100;
+            pointer-events: none;
+            width: 100%;
+            max-width: 15vw;
+            min-width: 80px;
+            display: flex;
+            justify-content: center;
+        }
+        .responsive-central-img {
+            width: 100%;
+            max-width: 115px;
+            height: auto;
+            object-fit: contain;
+        }
+        .animacionlogo {
+            animation: logo 1.5s forwards;
+        }
+        @keyframes logo {
+            from {
+                transform: translateX(-50%) translateY(150%) rotate(0);
+            }
+            to {
+                transform: translateX(-50%) translateY(0) rotate(360deg);
+            }
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #0b0b0b;
+            border-bottom: 1px solid #1a1a1a;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .cart-btn {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #333333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .cart-btn:hover {
+            background-color: #252525;
+            border-color: #555;
+        }
+        .cart-badge {
+            background-color: #ff6600;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .logo {
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+        .hero {
+            position: relative;
+            background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80') no-repeat center center;
+            background-size: cover;
+            padding: 140px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid #151515;
+        }
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .hero p {
+            color: #b0b0b0;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            gap: 10px;
+        }
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            padding-right: 55px;
+            background-color: rgba(18, 18, 18, 0.85);
+            border: 1px solid #333333;
+            border-radius: 30px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            transition: border-color 0.2s;
+        }
+        .search-input:focus {
+            border-color: #1d1c1c;
+        }
+        .search-input::placeholder {
+            color: #777777;
+        }
+        .search-icon {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #1d1c1c;
+            color: #ffffff;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .search-icon:hover {
+            background-color: #3c3b3b;
+            transform: translateY(-50%) scale(1.05);
+        }
+        .category-select {
+            padding: 0 20px;
+            background-color: rgba(18, 18, 18, 0.85);
+            border: 1px solid #333333;
+            border-radius: 30px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            transition: border-color 0.2s;
+        }
+        .category-select:focus {
+            border-color: #ff6600;
+        }
+        .category-select option {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .main-content {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background-color: #ff6600;
+            border-radius: 2px;
+        }
+        .section-title span.emoji {
+            font-size: 16px;
+        }
+        .catalog-section {
+            margin-top: 50px;
+        }
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .filter-chip {
+            background-color: #1a1a1a;
+            color: #b0b0b0;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+            cursor: pointer;
+            border: 1px solid #333;
+            transition: all 0.2s ease;
+        }
+        .filter-chip.active, .filter-chip:hover {
+            background-color: #ffffff;
+            color: #000000;
+            border-color: #fff;
+        }
+        #principal {
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        /* Contenedor con scroll vertical y grid de 4 columnas */
+        .products-scroll-container {
+            max-height: 620px;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 20px;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+        }
+        /* Tarjeta de producto profesional */
+        .product-card {
+            background-color: #141414;
+            border: 1px solid #222;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            border-color: #ff6600;
+        }
+        .product-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background-color: #1e1e1e;
+            overflow: hidden;
+        }
+        .product-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .product-card:hover .product-img-wrapper img {
+            transform: scale(1.05);
+        }
+        .product-category-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            color: #ffb74d;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .product-info {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: space-between;
+        }
+        .product-name { font-size: 14px; font-weight: 600; color: #ffffff; margin-bottom: 6px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+        .product-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .add-to-cart-btn {
+            background-color: #ff6600;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #e05b00;
+        }
+
+        #imagen{
+            object-fit: contain;
+        }
+        @media (max-width: 1200px) {
+            .products-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 900px) {
+            .products-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .search-container {
+                flex-direction: column;
+            }
+        }
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+            .logo {
+                font-size: 16px;
+                letter-spacing: 1px;
+            }
+            .hero {
+                padding: 90px 15px;
+            }
+            .hero h1 {
+                font-size: 20px;
+            }
+            .hero p {
+                font-size: 12px;
+            }
+            .main-content {
+                padding: 20px;
+            }
+            .section-title {
+                font-size: 16px;
+            }
+            .central-image-container {
+                max-width: 10vw;
+            }
+            .products-grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="central-image-container">
+        <img src="{{ url_for('static', filename='Img/Vortex-logo.png') }}" class="responsive-central-img">
+    </div>
+    <div id="principal">
+        <header>
+            <button class="cart-btn">
+                🛒 Carrito <span class="cart-badge" id="numero-carrito">0</span>
+            </button>
+            <div class="logo">VORTEX-COMMERCE</div>
+        </header>
+        <section class="hero">
+            <h1>LO QUE BUSCAS, AL INSTANTE</h1>
+            <p>Calidad premium y variedad exclusiva en un solo lugar.</p>
+            <div class="search-container">
+                <select class="category-select" id="selectctg">
+                    <option value="todo">Todas las categorías</option>
+                </select>
+                <div class="search-input-wrapper">
+                    <input type="text" class="search-input" id="inpt-buscar" placeholder="Buscar productos por coincidencia o nombre">
+                    <button type="button" class="search-icon" id="bton-buscar">🔍</button>
+                </div>
+            </div>
+        </section>
+        <main class="main-content">
+            <section class="catalog-section">
+                <h2 class="section-title">
+                    <span class="emoji">📦</span> CATÁLOGO DE PRODUCTOS
+                </h2>
+                <div class="products-scroll-container">
+                    <div class="products-grid" id="catalogoscroll">
+                    </div>   
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+<script>
+    const inpt_buscar = document.getElementById("inpt-buscar")
+    const bton_buscar = document.getElementById("bton-buscar")
+    const contenedor = document.getElementById("principal")
+    const logo = document.querySelector(".central-image-container")
+    const selectcategoria = document.getElementById("selectctg")
+    const valores = localStorage.getItem("ProductosAñadidos")
+    let numero = 0
+    if (valores){
+        let lista = JSON.parse(valores)
+        if (lista.length > 0){
+            document.getElementById("numero-carrito").textContent = lista.length
+            document.title = `Carrito(${lista.length})-Vortex Commerce`
+            numero = lista.length
+        }
+    }
+    const mantenerArriba = setInterval(() => {
+            window.scrollTo(0, 0);
+    }, 1)
+    setTimeout(()=>{
+        logo.classList.add("animacionlogo")
+        setTimeout(()=>{
+            contenedor.style.opacity="1"
+            clearInterval(mantenerArriba)
+            document.body.style.overflowY = "auto"
+            document.body.style.overflowX = "hidden"
+        },1200)
+    },400)
+
+    fetch("/obtenercategorias",{method:"POST"})
+    .then(res=>res.json())
+    .then(rptacategorias=>{
+        for (elemento of rptacategorias){
+            document.getElementById("selectctg").innerHTML += `<option value="${elemento[0]}">${elemento[0]}</option> `
+        }
+    })
+
+    fetch("/catalogoproductos",{method:"POST"})
+    .then(res=>res.json())
+    .then(rptacatalogo=>{
+        let html = ""
+        for (let elemento of rptacatalogo){
+            if (Number(elemento[4]) > 0){
+                html += `<div class="product-card">
+
+                            <div class="product-img-wrapper">
+
+                                <span class="product-category-label">${elemento[5]}</span>
+
+                                <img src="${elemento[3]}" id="imagen">
+
+                            </div>
+
+                            <div class="product-info">
+
+                                <h3 class="product-name">${elemento[1]}</h3>
+
+                                <div class="product-footer">
+
+                                    <span class="product-price">S/${elemento[6]}</span>
+                                    <button class="add-to-cart-btn" id="producto-${elemento[0]}">Añadir</button>
+
+                                </div>
+
+                            </div>
+
+                        </div>`
+            }
+        }
+        document.getElementById("catalogoscroll").innerHTML = html
+        for (let elemento of rptacatalogo){
+            let presionado = false
+            if (valores){
+                lista = JSON.parse(valores)
+                console.log(lista)
+                let encontrado = false
+                for (let elemento2 of lista){
+                    if (Number(elemento2.id) === Number(elemento[0])){
+                        encontrado = true
+                    }
+                }
+
+                if (encontrado === true){
+                    presionado = true
+                    document.getElementById(`producto-${elemento[0]}`).style.backgroundColor = "rgb(34, 139, 34)"
+                    document.getElementById(`producto-${elemento[0]}`).textContent = "Añadido"
+                }
+            }
+            document.getElementById(`producto-${elemento[0]}`).addEventListener("click",()=>{
+                    if (presionado === false){
+                        presionado = true
+                        document.getElementById(`producto-${elemento[0]}`).style.backgroundColor = "rgb(34, 139, 34)"
+                    document.getElementById(`producto-${elemento[0]}`).textContent = "Añadido"
+                    let productos = JSON.parse(localStorage.getItem("ProductosAñadidos")) || []
+                    productos.push({id: elemento[0]})
+                    localStorage.setItem("ProductosAñadidos", JSON.stringify(productos))
+                    numero += 1
+                    document.getElementById("numero-carrito").textContent = numero
+                    document.title = `Carrito(${numero})-Vortex Commerce`
+                    }
+
+                })
+        }
+
+    })
+
+    bton_buscar.addEventListener("click",()=>{
+        if (inpt_buscar.value.trim()!==""){
+            fetch("/obtener-busqueda",{method:"POST", headers:{"Content-Type": "application/json"}, body:JSON.stringify({dato:inpt_buscar.value.trim(), categoria:selectcategoria.value})})
+            .then(res=>res.json())
+            .then(rpta_busqueda=>{
+                if (rpta_busqueda.exito === true){
+                    sessionStorage.setItem("ProductosEncontrados", JSON.stringify(rpta_busqueda.lista))
+                    window.location.replace("/busqueda")
+                } else{
+                    inpt_buscar.style.color = "red"
+                    inpt_buscar.value = `No se encontro un producto con '${inpt_buscar.value}'`
+                    setTimeout(()=>{
+                        inpt_buscar.style.color = "white"
+                        inpt_buscar.value = ``
+                    },1200)
+                }
+            })
+        }
+    })
+
+</script>
+</html>
