@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" as="image" href="{{ url_for('static', filename='Img/Vortex-logo.png') }}">
     <title>Vortex-Commerce</title>
     <style>
         * {
@@ -418,7 +419,7 @@
 </head>
 <body>
     <div class="central-image-container">
-        <img src="{{ url_for('static', filename='Img/Vortex-logo.png') }}" class="responsive-central-img">
+        <img src="{{ url_for('static', filename='Img/Vortex-logo.png') }}" class="responsive-central-img" fetchpriority="high">
     </div>
     <div id="principal">
         <header>
