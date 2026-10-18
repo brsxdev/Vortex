@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preload" as="image" href="{{ url_for('static', filename='Img/Vortex-logo.png') }}" fetchpriority="high">
-    <link rel="icon" href="{{ url_for('static', filename='Img/Vortex-logo.png') }}" type="image/png">
     <title>Vortex-Commerce</title>
     <style>
         * {
@@ -482,6 +481,11 @@
             document.body.style.overflowY = "auto"
             document.body.style.overflowX = "hidden"
         },600)
+        const favicon = document.createElement("link");
+        favicon.rel = "icon";
+        favicon.href = "{{ url_for('static', filename='Img/Vortex-logo.png') }}";
+        favicon.type = "image/png";
+        document.head.appendChild(favicon)
     },100)
 
     fetch("/obtenercategorias",{method:"POST"})
