@@ -480,12 +480,12 @@
             clearInterval(mantenerArriba)
             document.body.style.overflowY = "auto"
             document.body.style.overflowX = "hidden"
-        },600)
-        const favicon = document.createElement("link");
+            const favicon = document.createElement("link");
         favicon.rel = "icon";
         favicon.href = "{{ url_for('static', filename='Img/Vortex-logo.png') }}";
         favicon.type = "image/png";
         document.head.appendChild(favicon)
+        },600)
     },100)
 
     fetch("/obtenercategorias",{method:"POST"})
